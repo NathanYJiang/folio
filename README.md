@@ -56,9 +56,9 @@ The **Aa** button switches between Sans, Serif and Mono and between Narrow, Medi
 
 ### Download
 
-Grab `Folio.zip` from the [latest release](../../releases/latest), unzip it, and drag **Folio.app** into `/Applications`.
+Grab `Folio.zip` from the [latest release](../../releases/latest), unzip it, and drag **Folio.app** into `/Applications`. Apple Silicon only.
 
-The app is ad-hoc signed, not notarized, so the first launch needs one extra step. Either right-click the app → **Open**, or run:
+The app is ad-hoc signed, not notarized, so macOS blocks the first launch. Open it once, then go to **System Settings → Privacy & Security** and click **Open Anyway**. Or skip all that and run:
 
 ```sh
 xattr -dr com.apple.quarantine /Applications/Folio.app
