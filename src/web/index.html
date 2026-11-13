@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Folio</title>
+  <link rel="stylesheet" href="katex.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-mode="read">
+  <header id="topbar" class="drag">
+    <div id="title"><span id="name"></span><span id="dirty"></span></div>
+    <div class="actions">
+      <span id="meta"></span>
+      <button class="icon-btn" id="edit-btn" data-cmd="toggleEdit" title="Edit  ⌘E">
+        <svg class="i-edit" viewBox="0 0 20 20"><path d="M12.6 4.4a1.9 1.9 0 0 1 2.7 2.7L7.5 15 4 16l1-3.5 7.6-8.1Z"/></svg>
+        <svg class="i-done" viewBox="0 0 20 20"><path d="m5 10.5 3.2 3.2L15 6.8"/></svg>
+      </button>
+      <button class="icon-btn" id="prefs-btn" title="Text">
+        <svg viewBox="0 0 20 20"><path d="M3 15.5 7 4.5l4 11M4.4 11.8h5.2M13 9.3c.5-.6 1.2-.9 2-.9 1.3 0 2 .8 2 2.1v5M17 12.6c-.6-.4-1.3-.5-2-.5-1.4 0-2.3.7-2.3 1.8s.8 1.7 1.9 1.7c1.2 0 2.4-.9 2.4-2.4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="content">
+    <div id="editor-wrap" hidden></div>
+    <div id="reader-scroll">
+      <article id="reader" class="prose"></article>
+    </div>
+  </div>
+
+  <div id="findbar" hidden>
+    <input id="find-input" placeholder="Find" spellcheck="false" autocomplete="off">
+    <span id="find-count"></span>
+    <button class="icon-btn sm" id="find-prev" title="Previous  ⇧↩"><svg viewBox="0 0 20 20"><path d="m5.5 12.5 4.5-4.5 4.5 4.5"/></svg></button>
+    <button class="icon-btn sm" id="find-next" title="Next  ↩"><svg viewBox="0 0 20 20"><path d="m5.5 7.5 4.5 4.5 4.5-4.5"/></svg></button>
+    <button class="icon-btn sm" id="find-close" title="Close  esc"><svg viewBox="0 0 20 20"><path d="m6 6 8 8M14 6l-8 8"/></svg></button>
+  </div>
+
+  <div id="prefs" class="popover" hidden>
+    <div class="pref-row">
+      <label>Font</label>
+      <div class="seg" data-pref="font">
+        <button data-v="sans">Sans</button>
+        <button data-v="serif" class="serif">Serif</button>
+        <button data-v="mono" class="mono">Mono</button>
+      </div>
+    </div>
+    <div class="pref-row">
+      <label>Width</label>
+      <div class="seg" data-pref="width">
+        <button data-v="narrow">Narrow</button>
+        <button data-v="medium">Medium</button>
+        <button data-v="wide">Wide</button>
+      </div>
+    </div>
+    <div class="pref-row">
+      <label>Size</label>
+      <div class="stepper">
+        <button data-cmd="zoomOut">−</button>
+        <span id="size-val">16</span>
+        <button data-cmd="zoomIn">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="drop-overlay" hidden><div>Drop to open</div></div>
+  <div id="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
