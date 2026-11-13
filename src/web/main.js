@@ -27,6 +27,7 @@ const S = {
   content: '',
   mtime: 0,
   mode: 'read',
+  isMarkdown: true,
   dirty: false,
   saving: false,
   prefs: { ...DEFAULT_PREFS },
@@ -36,7 +37,11 @@ const S = {
 
 const basename = (p) => p.split('/').filter(Boolean).pop() || p;
 const dirname = (p) => p.replace(/\/[^/]*$/, '') || '/';
-const stripExt = (name) => name.replace(/\.(md|markdown|mdown|mkdn?|mdx|txt)$/i, '');
+const MD_EXT = /\.(md|markdown|mdown|mkdn?|mdx)$/i;
+const PLAIN_EXT = new Set(['txt', 'text', 'log', 'csv', 'tsv']);
+const stripExt = (name) => name.replace(MD_EXT, '');
+const extOf = (p) => (basename(p).match(/\.([^.]+)$/) || [])[1]?.toLowerCase() || '';
+const isMarkdownPath = (p) => MD_EXT.test(p);
 const fileUrl = (p) => 'file://' + p.split('/').map(encodeURIComponent).join('/');
 const prettyPath = (p) => (S.home && p.startsWith(S.home) ? '~' + p.slice(S.home.length) : p);
 
@@ -149,6 +154,26 @@ function renderInto(target, src) {
   target.replaceChildren(frag);
 }
 
+function renderSource(target, src) {
+  const ext = extOf(S.path);
+  const lang = !PLAIN_EXT.has(ext) && hljs.getLanguage(ext) ? ext : null;
+  target.classList.add('source');
+  target.classList.toggle('code', !!lang);
+  if (!lang) {
+    const pre = document.createElement('pre');
+    pre.className = 'plaintext';
+    pre.textContent = src;
+    return target.replaceChildren(pre);
+  }
+  const code = document.createElement('code');
+  code.className = 'hljs';
+  if (src.length > 500_000) code.textContent = src;
+  else code.innerHTML = hljs.highlight(src, { language: lang, ignoreIllegals: true }).value;
+  const pre = document.createElement('pre');
+  pre.append(code);
+  target.replaceChildren(pre);
+}
+
 function taskLineIndexes(src) {
   const out = [];
   let fence = null;
@@ -165,6 +190,10 @@ function taskLineIndexes(src) {
 }
 
 function stats(src) {
+  if (!S.isMarkdown) {
+    const lines = src ? src.split('\n').length - (src.endsWith('\n') ? 1 : 0) : 0;
+    return `${lines.toLocaleString()} lines`;
+  }
   const words = (splitFrontmatter(src).body.match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu) || []).length;
   return `${words.toLocaleString()} words · ${Math.max(1, Math.round(words / 230))} min`;
 }
@@ -174,7 +203,8 @@ function stats(src) {
 function renderReader() {
   const rs = $('#reader-scroll');
   const top = rs.scrollTop;
-  renderInto($('#reader'), S.content);
+  if (S.isMarkdown) renderInto($('#reader'), S.content);
+  else renderSource($('#reader'), S.content);
   rs.scrollTop = top;
   $('#meta').textContent = stats(S.content);
   if (findState.open) runFind(false);
@@ -269,8 +299,7 @@ function ensureEditor() {
         drawSelection(),
         indentOnInput(),
         EditorView.lineWrapping,
-        markdown({ base: markdownLanguage, extensions: [{ remove: ['SetextHeading'] }] }),
-        syntaxHighlighting(mdHighlight),
+        S.isMarkdown ? [markdown({ base: markdownLanguage, extensions: [{ remove: ['SetextHeading'] }] }), syntaxHighlighting(mdHighlight)] : [],
         search({ top: true }),
         highlightSelectionMatches(),
         placeholder('Start writing…'),
@@ -572,6 +601,7 @@ window.app = {
 async function boot() {
   const init = await native('init');
   S.path = init.path;
+  S.isMarkdown = isMarkdownPath(S.path);
   S.home = init.home;
   if (init.prefs) window.app.setPrefs(init.prefs);
   else applyPrefs();

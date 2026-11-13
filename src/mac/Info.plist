@@ -19,19 +19,23 @@
     <dict>
       <key>CFBundleTypeName</key><string>Markdown Document</string>
       <key>CFBundleTypeRole</key><string>Editor</string>
-      <key>LSHandlerRank</key><string>Alternate</string>
+      <key>LSHandlerRank</key><string>Default</string>
       <key>LSItemContentTypes</key>
       <array>
         <string>net.daringfireball.markdown</string>
       </array>
     </dict>
     <dict>
-      <key>CFBundleTypeName</key><string>Plain Text</string>
-      <key>CFBundleTypeRole</key><string>Viewer</string>
+      <key>CFBundleTypeName</key><string>Text</string>
+      <key>CFBundleTypeRole</key><string>Editor</string>
       <key>LSHandlerRank</key><string>Alternate</string>
       <key>LSItemContentTypes</key>
       <array>
         <string>public.plain-text</string>
+        <string>public.source-code</string>
+        <string>public.script</string>
+        <string>public.json</string>
+        <string>public.yaml</string>
       </array>
     </dict>
     <dict>

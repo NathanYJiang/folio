@@ -644,3 +644,22 @@ body[data-mode="split"] #editor-wrap .cm-content { padding-left: 36px; padding-r
   font-weight: 500;
   box-shadow: var(--pop-shadow);
 }
+
+/* ---------- source / plain text ---------- */
+
+.prose.source.code { max-width: none; padding-left: 32px; padding-right: 32px; }
+.source pre {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 4;
+}
+.source pre code {
+  font-family: var(--font-mono);
+  font-size: calc(var(--fs) * 0.85);
+  line-height: 1.6;
+  color: var(--ink-2);
+  background: none;
+  padding: 0;
+}
+.source pre.plaintext { font: inherit; color: var(--ink-2); }
