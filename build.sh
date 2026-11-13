@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
-# Build Folio.app. Usage: ./build.sh [install]
+# Build Folio.app. Usage: ./build.sh [install | defaults [ext ...]]
 set -euo pipefail
 cd "$(dirname "$0")"
+
+LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+
+if [ "${1:-}" = "defaults" ]; then
+  shift
+  swift scripts/set-defaults.swift "/Applications/Folio.app" "$@"
+  exit
+fi
 
 APP_NAME="Folio"
 BUILD="build"
@@ -42,6 +50,7 @@ if [ "${1:-}" = "install" ]; then
   osascript -e "quit app \"$APP_NAME\"" >/dev/null 2>&1 || true
   mkdir -p "/Applications/$APP_NAME.app"
   rsync -a --delete "$APP/" "/Applications/$APP_NAME.app/"
-  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "/Applications/$APP_NAME.app"
+  "$LSREGISTER" -u "$PWD/$APP" >/dev/null 2>&1 || true
+  "$LSREGISTER" -f "/Applications/$APP_NAME.app"
   echo "Installed /Applications/$APP_NAME.app"
 fi

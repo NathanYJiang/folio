@@ -2,12 +2,19 @@ import Cocoa
 import WebKit
 import UniformTypeIdentifiers
 
-let markdownExtensions = ["md", "markdown", "mdown", "mkd", "mkdn", "mdx", "txt"]
+let markdownExtensions = ["md", "markdown", "mdown", "mkd", "mkdn", "mdx"]
+let readableTypes: [UTType] = [.plainText, .json, .yaml]
 let titlebarCenterY: CGFloat = 20
 let trafficLightX: CGFloat = 14
 
 func isMarkdown(_ path: String) -> Bool {
     markdownExtensions.contains((path as NSString).pathExtension.lowercased())
+}
+
+func isReadable(_ path: String) -> Bool {
+    if isMarkdown(path) { return true }
+    guard let type = UTType(filenameExtension: (path as NSString).pathExtension) else { return false }
+    return readableTypes.contains { type.conforms(to: $0) }
 }
 
 func mtime(_ path: String) -> Double {
@@ -41,7 +48,7 @@ final class DocWebView: WKWebView {
 
     private func paths(_ info: NSDraggingInfo) -> [String] {
         let urls = info.draggingPasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
-        return urls.map(\.path).filter(isMarkdown)
+        return urls.map(\.path).filter(isReadable)
     }
 
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
@@ -236,7 +243,7 @@ final class DocWindow: NSObject, NSWindowDelegate, WKNavigationDelegate, WKScrip
 
         case "openPath":
             if FileManager.default.fileExists(atPath: p) {
-                if isMarkdown(p) { app?.open(p) } else { NSWorkspace.shared.open(URL(fileURLWithPath: p)) }
+                if isReadable(p) { app?.open(p) } else { NSWorkspace.shared.open(URL(fileURLWithPath: p)) }
             }
             replyHandler(true, nil)
 
@@ -328,7 +335,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         panel.allowsMultipleSelection = true
-        panel.allowedContentTypes = markdownExtensions.compactMap { UTType(filenameExtension: $0) }
+        panel.allowedContentTypes = markdownExtensions.compactMap { UTType(filenameExtension: $0) } + readableTypes
         NSApp.activate(ignoringOtherApps: true)
         if panel.runModal() == .OK {
             panel.urls.forEach { open($0.path) }

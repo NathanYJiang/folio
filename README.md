@@ -31,6 +31,7 @@ Most markdown apps want to be your notes system: vaults, sidebars, tags, sync. F
 - **Edit in place:** <kbd>⌘E</kbd> opens a markdown editor with autosave. <kbd>⌘3</kbd> shows editor and preview side by side
 - **Clickable checkboxes:** ticking a task in the reader writes `[x]` back to the file
 - **Smart links:** links to other `.md` files open in Folio, web links open in your browser, and relative images just work
+- **Plain text and code too:** `.txt`, `.py`, `.json`, `.yaml` and other source files open as highlighted text
 - **Small and native:** about 200 KB of Swift wrapping a WebKit view. No Electron
 
 <p align="center">
@@ -78,7 +79,12 @@ npm install
 
 ### Make it the default
 
-Right-click any `.md` file → **Get Info** → **Open with: Folio** → **Change All…**
+```sh
+./build.sh defaults              # .md .txt .py .json .yaml
+./build.sh defaults js c swift   # or pick your own extensions
+```
+
+Or right-click a file → **Get Info** → **Open with: Folio** → **Change All…**
 
 ## How it's built
 
